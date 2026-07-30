@@ -9,6 +9,7 @@ import LoveLetter from './components/LoveLetter';
 import RawrClosing from './components/RawrClosing';
 import MusicToggle from './components/MusicToggle';
 import Envelope from './components/Envelope';
+import Preloader from './components/Preloader';
 import { useMusic } from './hooks/useMusic';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
 import { siteConfig } from './content/site.config';
@@ -16,6 +17,8 @@ import { siteConfig } from './content/site.config';
 function App() {
   const [showLetter, setShowLetter] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [isPreloading, setIsPreloading] = useState(false);
+  const [preloadProgress, setPreloadProgress] = useState(0);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [openingStep, setOpeningStep] = useState(0);
@@ -36,15 +39,92 @@ function App() {
   );
 
   const handleOpenEnvelope = () => {
-    setShowLetter(true);
-    // Audio: bunyi pas hero mulai muncul — new Audio() dijamin sinkron tanpa bergantung ref
-    const audio = new Audio('/audio/congrats.mp3');
-    audio.play().catch(() => {});
-    // Konfeti muncul 500ms setelah hero (pas teks sudah terbaca)
-    setTimeout(() => {
-      setShowConfetti(true);
-      setTimeout(() => { setShowConfetti(false); }, 3000);
-    }, 500);
+    setIsPreloading(true);
+    setPreloadProgress(0);
+
+    const assets = [
+      '/images/2d2ab1155b783a9474e82ce2b14e182c.jpg',
+      '/images/hero_char.png',
+      '/images/hero_char2.png',
+      '/images/hero_char3.png',
+      '/images/hero_char4.png',
+      '/images/bg_teks_hero.png',
+      '/images/salsa1.jpeg',
+      '/images/salsa2.jpeg',
+      '/images/salsa3.jpeg',
+      '/audio/bgm.mp3',
+      '/audio/congrats.mp3'
+    ];
+
+    let loadedCount = 0;
+    const totalAssets = assets.length;
+
+    const updateProgress = () => {
+      loadedCount++;
+      const progress = (loadedCount / totalAssets) * 100;
+      setPreloadProgress(progress);
+    };
+
+    const promises = assets.map((url) => {
+      return new Promise<void>((resolve) => {
+        const isAudio = url.endsWith('.mp3');
+        if (isAudio) {
+          const audio = new Audio(url);
+          audio.preload = 'auto';
+
+          const onCanPlay = () => {
+            audio.removeEventListener('canplaythrough', onCanPlay);
+            audio.removeEventListener('error', onError);
+            updateProgress();
+            resolve();
+          };
+
+          const onError = () => {
+            audio.removeEventListener('canplaythrough', onCanPlay);
+            audio.removeEventListener('error', onError);
+            updateProgress();
+            resolve();
+          };
+
+          audio.addEventListener('canplaythrough', onCanPlay);
+          audio.addEventListener('error', onError);
+          audio.load();
+        } else {
+          const img = new Image();
+          img.onload = () => {
+            updateProgress();
+            resolve();
+          };
+          img.onerror = () => {
+            updateProgress();
+            resolve();
+          };
+          img.src = url;
+        }
+      });
+    });
+
+    const timeoutPromise = new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 6000); // 6s safety timeout
+    });
+
+    Promise.race([Promise.all(promises), timeoutPromise]).then(() => {
+      setPreloadProgress(100);
+      setTimeout(() => {
+        setIsPreloading(false);
+        setShowLetter(true);
+        // Audio: bunyi pas hero mulai muncul
+        const audio = new Audio('/audio/congrats.mp3');
+        audio.play().catch(() => {});
+        // Konfeti muncul 500ms setelah hero (pas teks sudah terbaca)
+        setTimeout(() => {
+          setShowConfetti(true);
+          setTimeout(() => { setShowConfetti(false); }, 3000);
+        }, 500);
+      }, 400); // Mulus transisi setelah 100%
+    });
   };
 
   // ─── Navigation via engine (target tersinkron, tanpa pull-back) ───
@@ -176,6 +256,9 @@ function App() {
 
   return (
     <>
+      <AnimatePresence>
+        {isPreloading && <Preloader progress={preloadProgress} />}
+      </AnimatePresence>
       <AnimatePresence mode="wait">
         {!showLetter ? (
         <motion.div
