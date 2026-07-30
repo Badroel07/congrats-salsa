@@ -59,15 +59,15 @@ export default function Hero() {
             {/* Paper texture background layer with Multiply blend mode */}
             <div className="absolute inset-0 bg-[url('/images/bg_teks_hero.png')] bg-[length:100%_100%] bg-no-repeat mix-blend-multiply z-0 pointer-events-none" />
 
-            {/* Text container overlayed on top, softened slightly with a microscopic blur to simulate ink absorbing into paper fibers */}
+            {/* Text container overlayed on top — razor sharp contrast without blur */}
             <div 
               className="relative z-10 p-10 pl-14 pr-10 sm:p-12 sm:pl-24 sm:pr-16 sm:pt-20 sm:pb-20 md:p-16 md:pl-28 md:pr-20 md:pt-24 md:pb-24 lg:pl-32 lg:pr-24 flex flex-col justify-center w-full h-full"
-              style={{ filter: 'blur(0.22px) contrast(1.15) brightness(0.98)' }}
             >
-              <div className="relative w-full px-2 select-text">
+              {/* Text wrapper — subtle clockwise rotation matching paper lines */}
+              <div className="relative w-full px-2 select-text rotate-[1.5deg] md:rotate-[2deg] origin-center">
                 {/* Headline utama */}
                 <h1 
-                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold text-[#3E2723]/95 leading-tight mb-4"
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-elegant font-bold text-[#3E2723]/95 leading-tight mb-4 italic"
                   style={{ mixBlendMode: 'multiply' }}
                 >
                   Selamat, Salsaaa!! 🩷
@@ -75,13 +75,13 @@ export default function Hero() {
 
                 {/* Decorative Divider */}
                 <div 
-                  className="w-14 h-[1.5px] bg-[#3E2723]/30 mb-5"
+                  className="w-14 h-[1.5px] bg-[#3E2723]/35 mb-4"
                   style={{ mixBlendMode: 'multiply' }}
                 />
 
-                {/* Subheadline kecil */}
+                {/* Subheadline kecil — thicker font-bold & high contrast */}
                 <p 
-                  className="text-sm sm:text-base text-[#3E2723]/85 leading-relaxed italic font-sans font-medium mb-2"
+                  className="text-sm sm:text-base md:text-lg text-[#3E2723]/95 leading-relaxed italic font-handwritten font-bold mb-2"
                   style={{ mixBlendMode: 'multiply' }}
                 >
                   Telah diterima kerjaaaa, lewat surat ini aku ingin merayakan momen berharga ini bersamamu. Semoga suka yaaa 🩷

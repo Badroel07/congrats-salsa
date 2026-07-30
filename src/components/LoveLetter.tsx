@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence, type Variants } from 'framer-motion';
 import { siteConfig } from '../content/site.config';
 import { Heart } from '@phosphor-icons/react';
 import { useReducedMotion } from '../hooks/useReducedMotion';
@@ -14,7 +14,7 @@ export default function LoveLetter({ step, onStepChange }: LoveLetterProps) {
   const prefersReducedMotion = useReducedMotion();
 
   const { loveLetterParagraphs } = siteConfig;
-  
+
   // 3 foto Salsa yang baru
   const stripPhotos = [
     { url: '/images/salsa1.jpeg', alt: 'Salsa 1' },
@@ -33,10 +33,35 @@ export default function LoveLetter({ step, onStepChange }: LoveLetterProps) {
   const charY = useTransform(scrollYProgress, [0, 1], [60, -40]);
   const charRotate = useTransform(scrollYProgress, [0, 1], [3, -3]);
 
-  // Reduced motion → crossfade only; otherwise gentle fade+slide
-  const stepTransition = prefersReducedMotion
-    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
-    : { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -20 } };
+  // Variants untuk animasi ketik / tulis tangan cepat (typewriter handwriting reveal)
+  const typewriterContainerVariants: Variants = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.016, // ~16ms per karakter — cepat, halus, & responsif
+        delayChildren: 0.04,
+      },
+    },
+    exit: {
+      opacity: 0,
+      y: -8,
+      transition: { duration: 0.22, ease: [0.4, 0, 0.2, 1] },
+    },
+  };
+
+  const typewriterCharVariants: Variants = {
+    hidden: { opacity: 0, y: 3, scale: 0.94 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.1, ease: [0, 0, 0.2, 1] },
+    },
+  };
+
+  const currentParagraphText = loveLetterParagraphs[safeStep].text;
+  const paragraphWords = currentParagraphText.split(' ');
 
   return (
     <div
@@ -80,14 +105,14 @@ export default function LoveLetter({ step, onStepChange }: LoveLetterProps) {
         </motion.div>
 
         {/* ── RIGHT: Content Stack (Photostrip + Letter Card) ── */}
-        <div className="flex flex-col items-center gap-3 sm:gap-4 md:gap-5 w-full max-w-lg md:max-w-xl lg:max-w-2xl">
+        <div className="flex flex-col items-center gap-3 sm:gap-4 md:gap-5 w-full max-w-xl md:max-w-2xl lg:max-w-3xl xl:max-w-4xl">
 
           {/* ── Horizontal Photostrip with washi tape ── */}
           <motion.div
             initial={{ opacity: 0, rotate: -4, y: 20 }}
             animate={{ opacity: 1, rotate: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.34, 1.56, 0.64, 1], delay: 0.25 }}
-            className="relative w-full max-w-md md:max-w-lg"
+            className="relative w-full max-w-lg md:max-w-xl"
           >
             <div className="absolute -top-3 -left-2 w-12 h-5 bg-[#FFCCD5]/70 rotate-[-6deg] z-20 rounded-sm shadow-sm" />
             <div className="absolute -top-3 -right-2 w-10 h-5 bg-[#FFE59E]/70 rotate-[4deg] z-20 rounded-sm shadow-sm" />
@@ -119,13 +144,18 @@ export default function LoveLetter({ step, onStepChange }: LoveLetterProps) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1], delay: 0.4 }}
-            className="relative w-full"
+            className="relative w-[120%] sm:w-[125%] -translate-x-[10%] sm:-translate-x-[12.5%] max-w-2xl md:max-w-3xl lg:max-w-4xl overflow-visible rotate-[-1deg] hover:rotate-0 transition-transform duration-500 ease-out"
           >
-            <div className="absolute inset-2 bg-[#3E2723]/8 rounded-3xl blur-xl -z-10" />
+            {/* Shadow layer (separated to avoid blending flattening) */}
+            <div className="absolute inset-0 bg-[url('/images/bg_teks_hero.png')] bg-[length:100%_100%] bg-no-repeat filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.14)] opacity-40 -z-10 pointer-events-none" />
 
-            <div className="relative bg-white rounded-2xl shadow-xl border border-[#FFE59E]/25 overflow-hidden">
-              <div className="h-1.5 bg-gradient-to-r from-[#FDB813] via-[#FF8CA3] to-[#90B77D]" />
+            {/* Paper texture background layer with Multiply blend mode */}
+            <div className="absolute inset-0 bg-[url('/images/bg_teks_hero.png')] bg-[length:100%_100%] bg-no-repeat mix-blend-multiply z-0 pointer-events-none" />
 
+            {/* Letter content wrapper — razor sharp contrast without blur */}
+            <div
+              className="relative z-10 p-6 px-12 sm:p-10 sm:px-20 md:p-12 md:px-28 lg:p-14 lg:px-36 pt-8 sm:pt-10 md:pt-12 pb-8 sm:pb-10 md:pb-12 flex flex-col justify-center items-center w-full h-full"
+            >
               {/* Wax seal */}
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 z-20">
                 <div className="w-full h-full rounded-full bg-[#FF8CA3] shadow-md flex items-center justify-center ring-2 ring-white">
@@ -133,55 +163,84 @@ export default function LoveLetter({ step, onStepChange }: LoveLetterProps) {
                 </div>
               </div>
 
-              {/* Letter content — NO scrollbar, single paragraph per step */}
-              <div className="p-5 sm:p-6 md:p-8">
-                <p className="text-center font-handwritten text-xs sm:text-sm text-[#FDB813] tracking-widest uppercase mb-4">
-                  ✦ surat untuk kamu ✦
-                </p>
+              {/* Header Title — blended text matching Hero section */}
+              <p
+                className="text-center font-handwritten text-xs sm:text-sm md:text-base text-[#3E2723]/90 font-bold tracking-widest uppercase mb-3 italic rotate-[4deg] md:rotate-[3.5deg]"
+                style={{ mixBlendMode: 'multiply' }}
+              >
+                ✦ surat untuk kamu ✦
+              </p>
 
-                {/* Active paragraph with AnimatePresence */}
-                <div
-                  className="min-h-[8rem] sm:min-h-[9rem] md:min-h-[10rem] flex items-center justify-center"
-                  aria-live="polite"
-                  aria-atomic="true"
-                >
-                  <AnimatePresence mode="wait" initial={false}>
+              {/* Active paragraph — Typewriter handwriting animation */}
+              <div
+                className="min-h-[8rem] sm:min-h-[9rem] md:min-h-[10rem] w-full max-w-md md:max-w-lg flex items-center justify-center rotate-[4deg] md:rotate-[4deg] origin-center"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {prefersReducedMotion ? (
                     <motion.p
                       key={`ll-${safeStep}`}
-                      initial={stepTransition.initial}
-                      animate={stepTransition.animate}
-                      exit={stepTransition.exit}
-                      transition={{ duration: prefersReducedMotion ? 0.25 : 0.5, ease: 'easeInOut' }}
-                      className="font-handwritten text-[14px] sm:text-[15px] md:text-[16px] text-[#3E2723]/85 leading-relaxed text-center"
-                      style={{ fontFamily: 'var(--font-handwritten), cursive' }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="font-handlee text-[16px] sm:text-[18px] md:text-[20px] text-[#3E2723]/95 font-bold leading-relaxed text-center italic"
+                      style={{ fontFamily: '"Handlee", cursive', mixBlendMode: 'multiply' }}
                     >
-                      {loveLetterParagraphs[safeStep].text}
+                      {currentParagraphText}
                     </motion.p>
-                  </AnimatePresence>
-                </div>
+                  ) : (
+                    <motion.p
+                      key={`ll-${safeStep}`}
+                      variants={typewriterContainerVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="font-handlee text-[16px] sm:text-[18px] md:text-[20px] text-[#3E2723]/95 font-bold leading-relaxed text-center italic"
+                      style={{ fontFamily: '"Handlee", cursive', mixBlendMode: 'multiply' }}
+                    >
+                      {paragraphWords.map((word, wordIdx) => (
+                        <span key={wordIdx} className="inline-block whitespace-nowrap">
+                          {Array.from(word).map((char, charIdx) => (
+                            <motion.span key={charIdx} variants={typewriterCharVariants} className="inline-block">
+                              {char}
+                            </motion.span>
+                          ))}
+                          {wordIdx < paragraphWords.length - 1 && <span className="inline-block">&nbsp;</span>}
+                        </span>
+                      ))}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </div>
 
-                {/* Signature — only at last step */}
-                {isLastStep && (
+              {/* Signature — blended text matching Hero section */}
+              {isLastStep && (
+                <div className="rotate-[4deg] md:rotate-[4.5deg] origin-center">
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.3 }}
-                    className="flex items-center justify-between pt-3 mt-3 border-t border-[#FFE59E]/30"
+                    className="flex items-center justify-between pt-3 mt-3 border-t border-[#3E2723]/25"
+                    style={{ mixBlendMode: 'multiply' }}
                   >
                     <div className="flex flex-col">
-                      <span className="font-signature text-sm md:text-base text-[#3E2723]/70 italic leading-tight">
+                      <span className="font-signature text-sm md:text-base text-[#3E2723]/85 italic font-medium leading-tight" style={{ mixBlendMode: 'multiply' }}>
                         Dengan segenap cinta,
                       </span>
-                      <span className="font-signature text-base md:text-lg text-[#3E2723] font-semibold leading-tight">
+                      <span className="font-signature text-base md:text-lg text-[#3E2723]/95 font-bold italic leading-tight" style={{ mixBlendMode: 'multiply' }}>
                         {siteConfig.sender.name} 💕
                       </span>
                     </div>
                     <Heart size={22} weight="fill" className="text-[#FF8CA3] animate-pulse-soft" />
                   </motion.div>
-                )}
+                </div>
+              )}
 
+              {/* Micro decorative line & progress dots + hint — rotated clockwise to align with paper lines */}
+              <div className="rotate-[4deg] md:rotate-[4.5deg] origin-center flex flex-col items-center w-full">
                 {/* Micro decorative line */}
-                <div className="w-12 h-[2px] bg-[#FFE59E] rounded-full mx-auto mt-4" aria-hidden="true" />
+                <div className="w-14 h-[2px] bg-[#3E2723]/35 rounded-full mx-auto mt-4" style={{ mixBlendMode: 'multiply' }} aria-hidden="true" />
 
                 {/* Progress dots + hint */}
                 <div className="flex flex-col items-center gap-3 mt-3">
@@ -193,21 +252,21 @@ export default function LoveLetter({ step, onStepChange }: LoveLetterProps) {
                         onClick={() => onStepChange?.(i)}
                         aria-label={`Paragraf ${i + 1} dari ${totalSteps}`}
                         aria-current={i === safeStep ? 'step' : undefined}
-                        className={`rounded-full transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF8CA3] ${
-                          i === safeStep
-                            ? 'w-6 h-2 bg-[#FF8CA3]'
-                            : 'w-2 h-2 bg-[#3E2723]/20 hover:bg-[#FF8CA3]/50'
-                        }`}
+                        className={`rounded-full transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF8CA3] ${i === safeStep
+                          ? 'w-6 h-2 bg-[#FF8CA3]'
+                          : 'w-2 h-2 bg-[#3E2723]/25 hover:bg-[#FF8CA3]/50'
+                          }`}
                       />
                     ))}
                   </div>
-                  <p className="text-[11px] sm:text-xs font-sans text-[#3E2723]/45 tracking-wide">
+                  <p
+                    className="text-[11px] sm:text-xs font-sans text-[#3E2723]/70 font-medium italic tracking-wide"
+                    style={{ mixBlendMode: 'multiply' }}
+                  >
                     {isLastStep ? 'gulir lagi untuk melanjutkan ↓' : 'lanjut baca yaa ↓'}
                   </p>
                 </div>
               </div>
-
-              <div className="h-1 bg-gradient-to-r from-[#90B77D] via-[#FF8CA3] to-[#FDB813]" />
             </div>
           </motion.div>
         </div>

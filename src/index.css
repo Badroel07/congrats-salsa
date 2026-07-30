@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Merienda:wght@400;600;700&family=Outfit:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Merienda:wght@400;600;700&family=Outfit:wght@400;500;600&family=Handlee&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -12,7 +12,8 @@
 
   body {
     @apply bg-romantic-background text-romantic-text font-sans m-0 overflow-x-hidden;
-    --font-handwritten: "Merienda", cursive;
+    --font-handwritten: "Handlee", cursive;
+    --font-handlee: "Handlee", cursive;
   }
 
   :root {
@@ -55,6 +56,10 @@
 @layer utilities {
   .font-handwritten {
     font-family: var(--font-handwritten) !important;
+  }
+
+  .font-handlee {
+    font-family: var(--font-handlee), "Handlee", cursive !important;
   }
 
   .text-shadow-soft {
