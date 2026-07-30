@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Merienda:wght@400;600;700&family=Outfit:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-romantic-background text-romantic-text font-sans m-0 overflow-x-hidden;
+    --font-handwritten: "Merienda", cursive;
+  }
+
+  :root {
+    --color-primary: #FDB813;
+    --color-secondary: #FF8CA3;
+    --color-accent: #90B77D;
+    --color-text: #3E2723;
+    --color-bg: #FFFDF9;
+  }
+
+  /* Respect user motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .gradient-romantic {
+    background: linear-gradient(135deg, #FFFDF9 0%, #FFF8E7 50%, #FFEFC7 100%);
+  }
+
+  .gradient-hero {
+    background: linear-gradient(135deg, #FDB813 0%, #FF8CA3 50%, #90B77D 100%);
+  }
+
+  .glass {
+    @apply backdrop-blur-md bg-white/30;
+  }
+
+  .card-romantic {
+    @apply rounded-2xl bg-white/70 backdrop-blur-md border border-white/50 shadow-romantic;
+  }
+}
+
+@layer utilities {
+  .font-handwritten {
+    font-family: var(--font-handwritten) !important;
+  }
+
+  .text-shadow-soft {
+    text-shadow: 0 2px 10px rgba(253, 184, 19, 0.2);
+  }
+
+  .text-shadow-white {
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}

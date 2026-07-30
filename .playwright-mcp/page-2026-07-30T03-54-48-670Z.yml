@@ -1,0 +1,8 @@
+- generic [ref=e5]:
+  - paragraph [ref=e6]: Ada surat untukmu... 💕
+  - button "Buka amplop surat cinta dari pengirim" [disabled] [ref=e7] [cursor=pointer]:
+    - generic [ref=e10]:
+      - paragraph [ref=e11]: "To: Salsa 💕"
+      - paragraph [ref=e12]: "From: Chikal"
+      - paragraph [ref=e13]: Ada sesuatu yang spesial buat kamu...
+  - paragraph [ref=e25]: Membuka Surat Cinta...
