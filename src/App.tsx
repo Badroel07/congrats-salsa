@@ -10,6 +10,7 @@ import RawrClosing from './components/RawrClosing';
 import MusicToggle from './components/MusicToggle';
 import Envelope from './components/Envelope';
 import Preloader from './components/Preloader';
+import MobileGuard from './components/MobileGuard';
 import { useMusic } from './hooks/useMusic';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
 import { siteConfig } from './content/site.config';
@@ -38,7 +39,28 @@ function App() {
     siteConfig.music.volume
   );
 
+  // Auto-exit Fullscreen saat mencapai kata RAWERRRR (slide 3)
+  useEffect(() => {
+    if (activeSlideIndex === 3) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      } else if ((document as any).webkitFullscreenElement) {
+        (document as any).webkitExitFullscreen();
+      }
+    }
+  }, [activeSlideIndex]);
+
   const handleOpenEnvelope = () => {
+    // Paksa mode Fullscreen ketika surat dibuka oleh pengguna
+    const docEl = document.documentElement as any;
+    if (docEl.requestFullscreen) {
+      docEl.requestFullscreen().catch(() => {});
+    } else if (docEl.webkitRequestFullscreen) {
+      docEl.webkitRequestFullscreen();
+    } else if (docEl.msRequestFullscreen) {
+      docEl.msRequestFullscreen();
+    }
+
     setIsPreloading(true);
     setPreloadProgress(0);
 
@@ -256,6 +278,7 @@ function App() {
 
   return (
     <>
+      <MobileGuard />
       <AnimatePresence>
         {isPreloading && <Preloader progress={preloadProgress} />}
       </AnimatePresence>
