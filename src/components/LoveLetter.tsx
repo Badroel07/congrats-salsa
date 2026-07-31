@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence, type Variants } from 'framer-motion';
 import { siteConfig } from '../content/site.config';
-import { Heart } from '@phosphor-icons/react';
+import { Heart, Sparkle, Star } from '@phosphor-icons/react';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 
 interface LoveLetterProps {
@@ -70,6 +70,74 @@ export default function LoveLetter({ step, onStepChange }: LoveLetterProps) {
       role="region"
       aria-label="Surat cinta"
     >
+      {/* ── PERNAK-PERNIK BACKGROUND: Sparkles & Stars ── */}
+      <motion.div
+        animate={{ scale: [0.8, 1.25, 0.8], rotate: [0, -45, 0], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-16 left-28 sm:left-44 md:left-60 text-[#FF8CA3] z-0 pointer-events-none drop-shadow-sm"
+        aria-hidden="true"
+      >
+        <Sparkle size={28} weight="fill" />
+      </motion.div>
+
+      <motion.div
+        animate={{ scale: [1, 1.3, 1], rotate: [0, 30, 0], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+        className="absolute top-20 right-28 sm:right-44 md:right-64 text-[#FDB813] z-0 pointer-events-none drop-shadow-sm"
+        aria-hidden="true"
+      >
+        <Sparkle size={30} weight="fill" />
+      </motion.div>
+
+      <motion.div
+        animate={{ scale: [0.9, 1.2, 0.9], opacity: [0.5, 0.9, 0.5] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 0.9 }}
+        className="absolute bottom-24 left-32 sm:left-48 md:left-64 text-[#FF8CA3] z-0 pointer-events-none"
+        aria-hidden="true"
+      >
+        <Star size={24} weight="fill" />
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, -10, 0], opacity: [0.6, 0.95, 0.6] }}
+        transition={{ duration: 4.1, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-36 left-12 sm:left-24 text-[#FDB813]/80 z-0 pointer-events-none hidden md:block"
+        aria-hidden="true"
+      >
+        <Heart size={22} weight="fill" />
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, 10, 0], opacity: [0.6, 0.95, 0.6] }}
+        transition={{ duration: 4.3, repeat: Infinity, ease: 'easeInOut', delay: 0.7 }}
+        className="absolute bottom-32 right-12 sm:right-28 text-[#FF8CA3]/80 z-0 pointer-events-none hidden md:block"
+        aria-hidden="true"
+      >
+        <Heart size={20} weight="fill" />
+      </motion.div>
+
+      {/* ── PERNAK-PERNIK BACKGROUND: Scrapbook Badges ── */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, rotate: -6 }}
+        animate={{ opacity: 0.85, scale: 1, rotate: -4 }}
+        whileHover={{ scale: 1.05, rotate: 0 }}
+        transition={{ duration: 0.6 }}
+        className="absolute top-28 left-8 sm:left-14 md:left-24 z-10 pointer-events-none select-none bg-[#FFCCD5]/90 border-2 border-dashed border-[#FF8CA3]/70 rounded-xl px-3 py-1.5 shadow-sm rotate-[-4deg] hidden sm:flex items-center gap-1.5"
+        aria-hidden="true"
+      >
+        <span className="text-[11px] font-handwritten font-bold text-[#3E2723]/85 tracking-wide uppercase">💌 surat spesial</span>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, rotate: 8 }}
+        animate={{ opacity: 0.85, scale: 1, rotate: 6 }}
+        whileHover={{ scale: 1.05, rotate: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="absolute bottom-32 right-8 sm:right-16 md:right-24 z-10 pointer-events-none select-none bg-[#FFE59E]/90 border-2 border-dashed border-[#FDB813]/70 rounded-xl px-3 py-1.5 shadow-sm rotate-[6deg] hidden sm:flex items-center gap-1.5"
+        aria-hidden="true"
+      >
+        <span className="text-[11px] font-handwritten font-bold text-[#3E2723]/85 tracking-wide uppercase">💖 happy moments</span>
+      </motion.div>
       {/* ─── Background Ambience ─── */}
       <div className="absolute top-1/2 right-[10%] w-[60vw] h-[60vw] max-w-[700px] max-h-[700px] rounded-full bg-[radial-gradient(circle,_rgba(253,184,19,0.10)_0%,_transparent_65%)] pointer-events-none -translate-y-1/2" />
       <div className="absolute top-[60%] left-[5%] w-[40vw] h-[40vw] max-w-[450px] max-h-[450px] rounded-full bg-[radial-gradient(circle,_rgba(255,140,163,0.07)_0%,_transparent_65%)] pointer-events-none -translate-y-1/2" />
@@ -83,6 +151,36 @@ export default function LoveLetter({ step, onStepChange }: LoveLetterProps) {
         <path d="M40 40 L24 40 C26 34 32 28 40 24 Z" fill="currentColor" />
         <circle cx="10" cy="30" r="2" fill="currentColor" />
       </svg>
+
+      {/* ── Background Decorative Nailong Image (Sudut Kiri Bawah - Nempel Tanpa Celah) ── */}
+      <motion.div
+        className="absolute -bottom-2 -left-4 sm:-bottom-2 sm:left-0 md:-bottom-2 md:left-4 lg:-bottom-2 lg:left-8 z-0 pointer-events-none select-none"
+        aria-hidden="true"
+      >
+        <motion.img
+          src="/images/nai3.png"
+          alt="Nailong Section 3 Bottom-Left"
+          initial={{ opacity: 0, scale: 0.85, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+          className="w-56 sm:w-72 md:w-80 lg:w-[26rem] xl:w-[28rem] h-auto object-contain object-bottom drop-shadow-xl opacity-100 origin-bottom"
+        />
+      </motion.div>
+
+      {/* ── Background Decorative Nailong Image (Sudut Kanan Atas - Rotasi & Cermin 180 Derajat) ── */}
+      <div
+        className="absolute -top-2 -right-4 sm:-top-2 sm:right-0 md:-top-2 md:right-4 lg:-top-2 lg:right-8 z-0 pointer-events-none select-none rotate-180 -scale-x-100 origin-center"
+        aria-hidden="true"
+      >
+        <motion.img
+          src="/images/nai3.png"
+          alt="Nailong Section 3 Top-Right Inverted"
+          initial={{ opacity: 0, scale: 0.85, y: -30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+          className="w-56 sm:w-72 md:w-80 lg:w-[26rem] xl:w-[28rem] h-auto object-contain object-bottom drop-shadow-xl opacity-100 origin-bottom"
+        />
+      </div>
 
       {/* ─── Main Two-Column Layout ─── */}
       <div className="relative z-10 w-full max-w-6xl h-full flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 lg:gap-12 px-4 sm:px-6 md:px-10 lg:px-14 py-6 md:py-10">

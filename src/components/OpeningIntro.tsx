@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { Heart } from '@phosphor-icons/react';
+import { Heart, Sparkle, Star } from '@phosphor-icons/react';
 import { siteConfig } from '../content/site.config';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 
@@ -40,8 +40,74 @@ export default function OpeningIntro({ step, onStepChange }: OpeningIntroProps) 
       role="region"
       aria-label="Pesan pembuka"
     >
-      {/* Dashed scrapbook sewing border inside */}
-      <div className="absolute inset-4 border-2 border-dashed border-[#3E2723]/20 rounded-2xl pointer-events-none z-0" />
+      {/* ── PERNAK-PERNIK BACKGROUD: Sparkles & Stars ── */}
+      <motion.div
+        animate={{ scale: [0.8, 1.25, 0.8], rotate: [0, 45, 0], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-14 left-24 sm:left-40 md:left-56 text-[#FDB813] z-0 pointer-events-none drop-shadow-sm"
+        aria-hidden="true"
+      >
+        <Sparkle size={30} weight="fill" />
+      </motion.div>
+
+      <motion.div
+        animate={{ scale: [1, 1.3, 1], rotate: [0, -30, 0], opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
+        className="absolute top-16 right-24 sm:right-40 md:right-56 text-[#FF8CA3] z-0 pointer-events-none drop-shadow-sm"
+        aria-hidden="true"
+      >
+        <Sparkle size={26} weight="fill" />
+      </motion.div>
+
+      <motion.div
+        animate={{ scale: [0.85, 1.2, 0.85], opacity: [0.5, 0.9, 0.5] }}
+        transition={{ duration: 2.9, repeat: Infinity, ease: 'easeInOut', delay: 1.2 }}
+        className="absolute bottom-28 right-28 sm:right-44 md:right-60 text-[#FDB813] z-0 pointer-events-none"
+        aria-hidden="true"
+      >
+        <Star size={24} weight="fill" />
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, -10, 0], opacity: [0.6, 0.95, 0.6] }}
+        transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-40 left-10 sm:left-20 text-[#FF8CA3]/80 z-0 pointer-events-none hidden md:block"
+        aria-hidden="true"
+      >
+        <Heart size={22} weight="fill" />
+      </motion.div>
+
+      <motion.div
+        animate={{ y: [0, 10, 0], opacity: [0.6, 0.95, 0.6] }}
+        transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}
+        className="absolute bottom-36 right-12 sm:right-24 text-[#FDB813]/80 z-0 pointer-events-none hidden md:block"
+        aria-hidden="true"
+      >
+        <Heart size={20} weight="fill" />
+      </motion.div>
+
+      {/* ── PERNAK-PERNIK BACKGROUD: Scrapbook Badges ── */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, rotate: -8 }}
+        animate={{ opacity: 0.85, scale: 1, rotate: -6 }}
+        whileHover={{ scale: 1.05, rotate: 0 }}
+        transition={{ duration: 0.6 }}
+        className="absolute top-24 left-8 sm:left-14 md:left-24 z-10 pointer-events-none select-none bg-[#FFE59E]/90 border-2 border-dashed border-[#FDB813]/70 rounded-xl px-3 py-1.5 shadow-sm rotate-[-6deg] hidden sm:flex items-center gap-1.5"
+        aria-hidden="true"
+      >
+        <span className="text-[11px] font-handwritten font-bold text-[#3E2723]/85 tracking-wide uppercase">✨ special for salsa</span>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
+        animate={{ opacity: 0.85, scale: 1, rotate: 8 }}
+        whileHover={{ scale: 1.05, rotate: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="absolute bottom-28 right-8 sm:right-16 md:right-24 z-10 pointer-events-none select-none bg-[#FFCCD5]/90 border-2 border-dashed border-[#FF8CA3]/70 rounded-xl px-3 py-1.5 shadow-sm rotate-[8deg] hidden sm:flex items-center gap-1.5"
+        aria-hidden="true"
+      >
+        <span className="text-[11px] font-handwritten font-bold text-[#3E2723]/85 tracking-wide uppercase">🎉 proud of you</span>
+      </motion.div>
 
       {/* Decorative sticker backgrounds */}
       <motion.div
@@ -53,6 +119,36 @@ export default function OpeningIntro({ step, onStepChange }: OpeningIntroProps) 
           <path d="M50 35 C50 15, 20 15, 20 40 C20 65, 50 85, 50 85 C50 85, 80 65, 80 40 C80 15, 50 15, 50 35 Z" />
         </svg>
       </motion.div>
+
+      {/* ── Background Decorative Nailong Image (Sudut Kiri Bawah - Nempel Tanpa Celah) ── */}
+      <motion.div
+        className="absolute -bottom-2 -left-4 sm:-bottom-2 sm:left-0 md:-bottom-2 md:left-4 lg:-bottom-2 lg:left-8 z-0 pointer-events-none select-none"
+        aria-hidden="true"
+      >
+        <motion.img
+          src="/images/nai1.png"
+          alt="Nailong Deco"
+          initial={{ opacity: 0, scale: 0.85, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+          className="w-56 sm:w-72 md:w-80 lg:w-[26rem] xl:w-[28rem] h-auto object-contain object-bottom drop-shadow-xl opacity-100 origin-bottom"
+        />
+      </motion.div>
+
+      {/* ── Background Decorative Nailong Image (Sudut Kanan Atas - Rotasi & Cermin 180 Derajat) ── */}
+      <div
+        className="absolute -top-2 -right-4 sm:-top-2 sm:right-0 md:-top-2 md:right-4 lg:-top-2 lg:right-8 z-0 pointer-events-none select-none rotate-180 -scale-x-100 origin-center"
+        aria-hidden="true"
+      >
+        <motion.img
+          src="/images/nai1.png"
+          alt="Nailong Deco Inverted"
+          initial={{ opacity: 0, scale: 0.85, y: -30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+          className="w-56 sm:w-72 md:w-80 lg:w-[26rem] xl:w-[28rem] h-auto object-contain object-bottom drop-shadow-xl opacity-100 origin-bottom"
+        />
+      </div>
 
       <motion.div
         style={{ y: rightStickerY }}

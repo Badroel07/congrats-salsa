@@ -43,7 +43,7 @@ function App() {
   useEffect(() => {
     if (activeSlideIndex === 3) {
       if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
+        document.exitFullscreen().catch(() => { });
       } else if ((document as any).webkitFullscreenElement) {
         (document as any).webkitExitFullscreen();
       }
@@ -54,7 +54,7 @@ function App() {
     // Paksa mode Fullscreen ketika surat dibuka oleh pengguna
     const docEl = document.documentElement as any;
     if (docEl.requestFullscreen) {
-      docEl.requestFullscreen().catch(() => {});
+      docEl.requestFullscreen().catch(() => { });
     } else if (docEl.webkitRequestFullscreen) {
       docEl.webkitRequestFullscreen();
     } else if (docEl.msRequestFullscreen) {
@@ -70,6 +70,8 @@ function App() {
       '/images/hero_char2.png',
       '/images/hero_char3.png',
       '/images/hero_char4.png',
+      '/images/nai1.png',
+      '/images/nai3.png',
       '/images/bg_teks_hero.png',
       '/images/salsa1.jpeg',
       '/images/salsa2.jpeg',
@@ -139,7 +141,7 @@ function App() {
         setShowLetter(true);
         // Audio: bunyi pas hero mulai muncul
         const audio = new Audio('/audio/congrats.mp3');
-        audio.play().catch(() => {});
+        audio.play().catch(() => { });
         // Konfeti muncul 500ms setelah hero (pas teks sudah terbaca)
         setTimeout(() => {
           setShowConfetti(true);
@@ -153,8 +155,8 @@ function App() {
   const handleGoToSlide = useCallback((index: number) => {
     // Slide-1 diwakili opening-track, slide-2 diwakili loveletter-track
     const id = index === 1 ? 'opening-track'
-             : index === 2 ? 'loveletter-track'
-             : `slide-${index}`;
+      : index === 2 ? 'loveletter-track'
+        : `slide-${index}`;
     const el = document.getElementById(id);
     if (!el) return;
     smoothScrollTo(el.getBoundingClientRect().top + window.scrollY);
@@ -213,7 +215,7 @@ function App() {
       const track = document.getElementById('opening-track');
       if (track) {
         const rect = track.getBoundingClientRect();
-        
+
         // Auto-play BGM jika user mulai scroll masuk ke track pembuka
         if (rect.top <= window.innerHeight * 0.8 && !bgmStarted.current) {
           bgmStarted.current = true;
@@ -284,72 +286,94 @@ function App() {
       </AnimatePresence>
       <AnimatePresence mode="wait">
         {!showLetter ? (
-        <motion.div
-          key="envelope-screen"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-        >
-          <Envelope onOpen={handleOpenEnvelope} />
-        </motion.div>
-      ) : (
-        <motion.div
-          key="website-content"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-          className="relative min-h-[100vh] gradient-romantic selection:bg-romantic-primary/30 selection:text-romantic-text flex flex-col justify-between"
-        >
-          <ScrollProgressBar progress={scrollProgress} />
-          <ConfettiOverlay isActive={showConfetti} />
-          <FloatingHearts />
+          <motion.div
+            key="envelope-screen"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <Envelope onOpen={handleOpenEnvelope} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="website-content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            className="relative min-h-[100vh] gradient-romantic selection:bg-romantic-primary/30 selection:text-romantic-text flex flex-col justify-between"
+          >
+            <ScrollProgressBar progress={scrollProgress} />
+            <ConfettiOverlay isActive={showConfetti} />
+            <FloatingHearts />
 
-          <main className="relative z-10 w-full flex-grow">
-            <div id="slide-0" className="w-full h-[100dvh] flex items-center justify-center sticky top-0 z-0 overflow-hidden shrink-0">
-              <Hero />
-            </div>
-
-            {/* ─── PINNED OPENING TRACK ───
-                Track tinggi = N pesan × 100dvh. Panel sticky diam memenuhi viewport
-                selama track dilewati; step pesan murni fungsi posisi scroll. */}
-            <div
-              id="opening-track"
-              className="relative w-full z-10 bg-[url('/images/2d2ab1155b783a9474e82ce2b14e182c.jpg')] bg-cover bg-center shadow-[0_-20px_50px_rgba(0,0,0,0.15)] shrink-0"
-              style={{ height: `${totalOpeningSteps * 200}dvh` }}
-            >
-              <div
-                id="slide-1"
-                className="sticky top-0 w-full h-[100dvh] flex items-center justify-center overflow-hidden"
-              >
-                <OpeningIntro step={openingStep} onStepChange={handleGoToOpeningStep} />
+            <main className="relative z-10 w-full flex-grow">
+              <div id="slide-0" className="w-full h-[100dvh] flex items-center justify-center sticky top-0 z-0 overflow-hidden shrink-0">
+                <Hero />
               </div>
-            </div>
 
-            {/* ─── PINNED LOVELETTER TRACK ───
-                Track tinggi = N paragraf × 200dvh. Panel sticky diam memenuhi viewport
-                selama track dilewati; step paragraf murni fungsi posisi scroll. */}
-            <div
-              id="loveletter-track"
-              className="relative w-full z-10 bg-[url('/images/2d2ab1155b783a9474e82ce2b14e182c.jpg')] bg-cover bg-center shadow-[0_-20px_50px_rgba(0,0,0,0.15)] shrink-0"
-              style={{ height: `${totalLoveLetterSteps * 200}dvh` }}
-            >
-              <div
-                id="slide-2"
-                className="sticky top-0 w-full h-[100dvh] flex items-center justify-center overflow-hidden"
-              >
-                <LoveLetter step={loveLetterStep} onStepChange={handleGoToLoveLetterStep} />
+              {/* ─── UNIFIED SEAMLESS VIDEO TRACK (SECTION 2 & SECTION 3) ─── */}
+              <div className="relative w-full z-10 shadow-[0_-20px_50px_rgba(0,0,0,0.12)] shrink-0">
+                {/* Sticky Background Video (Seamless across Section 2 & 3) */}
+                <div className="sticky top-0 w-full h-[100dvh] overflow-hidden z-0 pointer-events-none bg-[#FFF5DB]">
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover opacity-75 blur-[3px] scale-105"
+                  >
+                    <source src="/video/bg.mp4" type="video/mp4" />
+                    <source src="/video/bg.mp4" type="video/mp4" />
+                  </video>
+                  {/* Soft warm overlay for crisp text contrast */}
+                  <div className="absolute inset-0 bg-[#FFF5DB]/25 pointer-events-none z-10" />
+                </div>
+
+                {/* Content Tracks Overlayed over Sticky Video */}
+                <div className="relative z-10 -mt-[100dvh]">
+                  {/* ─── PINNED OPENING TRACK ───
+                    Track tinggi = N pesan × 200dvh. Panel sticky diam memenuhi viewport
+                    selama track dilewati; step pesan murni fungsi posisi scroll. */}
+                  <div
+                    id="opening-track"
+                    className="relative w-full z-10 shrink-0"
+                    style={{ height: `${totalOpeningSteps * 200}dvh` }}
+                  >
+                    <div
+                      id="slide-1"
+                      className="sticky top-0 w-full h-[100dvh] flex items-center justify-center overflow-hidden"
+                    >
+                      <OpeningIntro step={openingStep} onStepChange={handleGoToOpeningStep} />
+                    </div>
+                  </div>
+
+                  {/* ─── PINNED LOVELETTER TRACK ───
+                    Track tinggi = N paragraf × 200dvh. Panel sticky diam memenuhi viewport
+                    selama track dilewati; step paragraf murni fungsi posisi scroll. */}
+                  <div
+                    id="loveletter-track"
+                    className="relative w-full z-10 shrink-0"
+                    style={{ height: `${totalLoveLetterSteps * 200}dvh` }}
+                  >
+                    <div
+                      id="slide-2"
+                      className="sticky top-0 w-full h-[100dvh] flex items-center justify-center overflow-hidden"
+                    >
+                      <LoveLetter step={loveLetterStep} onStepChange={handleGoToLoveLetterStep} />
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
 
-            {/* ─── RAWR CLOSING ─── */}
-            <RawrClosing />
+              {/* ─── RAWR CLOSING ─── */}
+              <RawrClosing />
 
-          </main>
+            </main>
 
-          <MusicToggle isPlaying={isPlaying} isLoaded={isLoaded} onToggle={toggle} labelPlay={siteConfig.labels.musicPlay} labelStop={siteConfig.labels.musicStop} />
-        </motion.div>
-      )}
-    </AnimatePresence>
+            <MusicToggle isPlaying={isPlaying} isLoaded={isLoaded} onToggle={toggle} labelPlay={siteConfig.labels.musicPlay} labelStop={siteConfig.labels.musicStop} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
