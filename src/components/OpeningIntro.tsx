@@ -4,19 +4,21 @@ import { Heart, Sparkle, Star } from '@phosphor-icons/react';
 import { siteConfig } from '../content/site.config';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 
+import { getInteractiveScrollHint } from './LoveLetter';
+
 interface OpeningIntroProps {
   step: number;
+  progress?: number;
   onStepChange?: (step: number) => void;
 }
 
-export default function OpeningIntro({ step, onStepChange }: OpeningIntroProps) {
+export default function OpeningIntro({ step, progress = 0, onStepChange }: OpeningIntroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
   const messages = siteConfig.openingMessages;
   const totalSteps = messages.length;
   const safeStep = Math.min(Math.max(step, 0), totalSteps - 1);
-  const isLastStep = safeStep === totalSteps - 1;
 
   // ── Framer Motion Parallax (static while pinned — no flicker) ──
   const { scrollYProgress } = useScroll({
@@ -250,9 +252,31 @@ export default function OpeningIntro({ step, onStepChange }: OpeningIntroProps) 
                     />
                   ))}
                 </div>
-                <p className="text-[11px] sm:text-xs font-sans text-[#3E2723]/45 tracking-wide">
-                  {isLastStep ? 'gulir lagi untuk melanjutkan ↓' : 'gulir pelan-pelan yaa ↓'}
-                </p>
+                {(() => {
+                  const hintInfo = getInteractiveScrollHint(
+                    safeStep,
+                    totalSteps,
+                    progress,
+                    'scroll pelan-pelan yaa ↓',
+                    'scroll lagi untuk melanjutkan ↓'
+                  );
+                  return (
+                    <AnimatePresence mode="wait">
+                      <motion.p
+                        key={hintInfo.text}
+                        initial={{ opacity: 0, y: 3 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -3 }}
+                        transition={{ duration: 0.18 }}
+                        className={`text-[11px] sm:text-xs font-handwritten font-bold tracking-wide select-none ${
+                          hintInfo.isFunHint ? 'text-pink-600 font-bold animate-pulse-soft' : 'text-[#3E2723]/60'
+                        }`}
+                      >
+                        {hintInfo.text}
+                      </motion.p>
+                    </AnimatePresence>
+                  );
+                })()}
               </div>
             </div>
           </div>

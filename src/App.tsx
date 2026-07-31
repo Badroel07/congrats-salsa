@@ -23,7 +23,9 @@ function App() {
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [openingStep, setOpeningStep] = useState(0);
+  const [openingProgress, setOpeningProgress] = useState(0);
   const [loveLetterStep, setLoveLetterStep] = useState(0);
+  const [loveLetterProgress, setLoveLetterProgress] = useState(0);
 
   const bgmStarted = useRef(false);
 
@@ -227,6 +229,7 @@ function App() {
         const progress = Math.min(Math.max(raw, 0), 1);
         const step = Math.round(progress * (totalOpeningSteps - 1));
         setOpeningStep(step);
+        setOpeningProgress(progress);
       }
 
       // LoveLetter step — identik dengan opening step
@@ -238,6 +241,7 @@ function App() {
         const progress = Math.min(Math.max(raw, 0), 1);
         const step = Math.round(progress * (totalLoveLetterSteps - 1));
         setLoveLetterStep(step);
+        setLoveLetterProgress(progress);
       }
     };
 
@@ -343,7 +347,7 @@ function App() {
                       id="slide-1"
                       className="sticky top-0 w-full h-[100dvh] flex items-center justify-center overflow-hidden"
                     >
-                      <OpeningIntro step={openingStep} onStepChange={handleGoToOpeningStep} />
+                      <OpeningIntro step={openingStep} progress={openingProgress} onStepChange={handleGoToOpeningStep} />
                     </div>
                   </div>
 
@@ -359,7 +363,7 @@ function App() {
                       id="slide-2"
                       className="sticky top-0 w-full h-[100dvh] flex items-center justify-center overflow-hidden"
                     >
-                      <LoveLetter step={loveLetterStep} onStepChange={handleGoToLoveLetterStep} />
+                      <LoveLetter step={loveLetterStep} progress={loveLetterProgress} onStepChange={handleGoToLoveLetterStep} />
                     </div>
                   </div>
                 </div>

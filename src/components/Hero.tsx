@@ -1,16 +1,29 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { staggerContainer, slideInLeft, slideInRight } from '../animations/variants';
 import { useRef } from 'react';
+import { CaretDown } from '@phosphor-icons/react';
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Track scroll progress of the viewport (or document)
+  // Track scroll position of the viewport (or document)
   const { scrollY } = useScroll();
   
   // Transform scroll position into a positive translateY (moving downward slowly)
   // When scrolled by 1 window height (around 800-1000px), shift Hero down by 250px
   const y = useTransform(scrollY, [0, 800], [0, 250]);
+
+  // Transform scroll position for scroll-down hint opacity (fades out as user scrolls)
+  const hintOpacity = useTransform(scrollY, [0, 120], [1, 0]);
+
+  const handleScrollDown = () => {
+    const nextSection = document.getElementById('opening-track');
+    if (nextSection) {
+      nextSection.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div ref={containerRef} className="relative w-full h-full flex flex-col items-center justify-center select-none bg-[url('/images/2d2ab1155b783a9474e82ce2b14e182c.jpg')] bg-cover bg-center overflow-hidden">
@@ -90,6 +103,28 @@ export default function Hero() {
             </div>
           </div>
         </motion.div>
+      </motion.div>
+
+      {/* Scroll Down Hint Button */}
+      <motion.div
+        style={{ opacity: hintOpacity }}
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1, duration: 0.6 }}
+        className="absolute bottom-5 sm:bottom-7 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center cursor-pointer group"
+        onClick={handleScrollDown}
+      >
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/75 backdrop-blur-md border border-pink-200/70 shadow-md group-hover:bg-white/95 group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
+          <span className="text-xs sm:text-sm font-handwritten font-bold text-[#3E2723] tracking-wide select-none">
+            Scroll ke bawah
+          </span>
+          <motion.div
+            animate={{ y: [0, 5, 0] }}
+            transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
+          >
+            <CaretDown weight="bold" className="w-4 h-4 text-[#3E2723] group-hover:text-pink-600 transition-colors" />
+          </motion.div>
+        </div>
       </motion.div>
     </div>
   );

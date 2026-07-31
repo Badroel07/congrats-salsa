@@ -1,15 +1,55 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence, type Variants } from 'framer-motion';
 import { siteConfig } from '../content/site.config';
-import { Heart, Sparkle, Star } from '@phosphor-icons/react';
+import { Heart, Sparkle, Star, CaretDown } from '@phosphor-icons/react';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 
 interface LoveLetterProps {
   step: number;
+  progress?: number;
   onStepChange?: (step: number) => void;
 }
 
-export default function LoveLetter({ step, onStepChange }: LoveLetterProps) {
+export function getInteractiveScrollHint(
+  step: number,
+  totalSteps: number,
+  progress: number,
+  defaultNormalText?: string,
+  defaultLastText?: string
+): { text: string; isFunHint: boolean } {
+  const isLastStep = step === totalSteps - 1;
+  const rawStep = progress * (totalSteps - 1);
+
+  const fallbackNormal = defaultNormalText || `Scroll ke bawah untuk lanjut membaca (${step + 1}/${totalSteps}) 💖`;
+  const fallbackLast = defaultLastText || `Scroll ke bawah untuk kejutan berikutnya! ✨`;
+
+  if (!isLastStep) {
+    const stepStart = step === 0 ? 0 : step - 0.5;
+    const stepEnd = step + 0.5;
+    const stepSpan = stepEnd - stepStart;
+    const localProgress = (rawStep - stepStart) / stepSpan;
+
+    if (localProgress >= 0.65) {
+      return { text: 'dikit lagi sayang ✨', isFunHint: true };
+    } else if (localProgress >= 0.28) {
+      return { text: 'terus scroll sayangg 💖', isFunHint: true };
+    } else {
+      return { text: fallbackNormal, isFunHint: false };
+    }
+  } else {
+    const localProgress = Math.max(0, (rawStep - (totalSteps - 1.5)) / 0.5);
+
+    if (localProgress >= 0.50) {
+      return { text: 'dikit lagi sayang ✨', isFunHint: true };
+    } else if (localProgress >= 0.20) {
+      return { text: 'terus scroll sayangg 💖', isFunHint: true };
+    } else {
+      return { text: fallbackLast, isFunHint: false };
+    }
+  }
+}
+
+export default function LoveLetter({ step, progress = 0, onStepChange }: LoveLetterProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
@@ -340,8 +380,8 @@ export default function LoveLetter({ step, onStepChange }: LoveLetterProps) {
                 {/* Micro decorative line */}
                 <div className="w-14 h-[2px] bg-[#3E2723]/35 rounded-full mx-auto mt-4" style={{ mixBlendMode: 'multiply' }} aria-hidden="true" />
 
-                {/* Progress dots + hint */}
-                <div className="flex flex-col items-center gap-3 mt-3">
+                {/* Progress dots + interactive scroll hint */}
+                <div className="flex flex-col items-center gap-2.5 mt-3">
                   <div className="flex items-center gap-2" role="group" aria-label="Progres surat">
                     {loveLetterParagraphs.map((_, i) => (
                       <button
@@ -357,12 +397,58 @@ export default function LoveLetter({ step, onStepChange }: LoveLetterProps) {
                       />
                     ))}
                   </div>
-                  <p
-                    className="text-[11px] sm:text-xs font-sans text-[#3E2723]/70 font-medium italic tracking-wide"
-                    style={{ mixBlendMode: 'multiply' }}
-                  >
-                    {isLastStep ? 'gulir lagi untuk melanjutkan ↓' : 'lanjut baca yaa ↓'}
-                  </p>
+
+                  {/* Interactive Scroll Down Hint Button */}
+                  {(() => {
+                    const hintInfo = getInteractiveScrollHint(safeStep, totalSteps, progress);
+                    return (
+                      <motion.button
+                        type="button"
+                        onClick={() => {
+                          if (!isLastStep) {
+                            onStepChange?.(safeStep + 1);
+                          } else {
+                            const rawrSection = document.getElementById('slide-3');
+                            if (rawrSection) {
+                              rawrSection.scrollIntoView({ behavior: 'smooth' });
+                            } else {
+                              window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                            }
+                          }
+                        }}
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.96 }}
+                        className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-md shadow-sm hover:shadow-md transition-all duration-300 group cursor-pointer ${
+                          hintInfo.isFunHint
+                            ? 'bg-pink-100/90 border border-pink-400/60 shadow-pink-200/50'
+                            : 'bg-white/80 border border-[#FF8CA3]/40 hover:bg-white'
+                        }`}
+                      >
+                        <AnimatePresence mode="wait">
+                          <motion.span
+                            key={hintInfo.text}
+                            initial={{ opacity: 0, y: 3 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -3 }}
+                            transition={{ duration: 0.18 }}
+                            className={`text-[11px] sm:text-xs font-handwritten font-bold tracking-wide select-none ${
+                              hintInfo.isFunHint ? 'text-pink-700' : 'text-[#3E2723]'
+                            }`}
+                          >
+                            {hintInfo.text}
+                          </motion.span>
+                        </AnimatePresence>
+                        <motion.div
+                          animate={{ y: [0, 4, 0] }}
+                          transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
+                        >
+                          <CaretDown weight="bold" className={`w-3.5 h-3.5 transition-colors ${
+                            hintInfo.isFunHint ? 'text-pink-600' : 'text-[#FF8CA3] group-hover:text-[#E05270]'
+                          }`} />
+                        </motion.div>
+                      </motion.button>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
